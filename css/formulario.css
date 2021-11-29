@@ -1,0 +1,16 @@
+*{
+  margin: 0 auto;
+  padding: 0;
+}
+body{
+  background-color: #91F6EA;
+  text-align: center;
+}
+form{
+    margin-top: 50px;
+}
+input[type='submit']{
+  margin-top: 20px;
+  height: 50px;
+  width: 60px;
+}
