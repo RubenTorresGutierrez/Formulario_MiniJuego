@@ -20,7 +20,7 @@
 			//Consulta SQL para añadir una fila nueva a la tabla partida
 			$consulta = 'INSERT INTO partida(idJuego, nick, puntuacion, fechaHora)'.
 						'VALUES('.$datos['minijuego'].', "'.$datos['nick'].'", '.$datos['puntos'].', CURRENT_TIMESTAMP);';
-			
+
 			// Mandar la consulta a la Clase Conexion
 			$this->conexion->consultar($consulta);
 
@@ -44,10 +44,10 @@
 		function modificarPartida($datos){
 
 			//Consulta SQL para comprobar la cantidad de filas que hay en la tabla partida
-			$consulta = 'UPDATE partida SET'.
-						'idJuego = '.$datos['minijuego'].', nick = "'.$datos['nick'].'", puntuacion = '.$datos['puntos'].', fechaHora = CURRENT_TIMESTAMP'.
-						'WHERE idPartida = (SELECT idPartida FROM partida WHERE puntuacion = MIN(puntuacion))'.
-						'AND puntuacion > (SELECT MIN(puntuacion) FROM partida);';
+			$consulta = 'UPDATE partida SET '.
+						'nick = "'.$datos['nick'].'", puntuacion = '.$datos['puntos'].', fechaHora = CURRENT_TIMESTAMP '.
+						'WHERE idPartida = (SELECT idPartida FROM partida HAVING MIN(puntuacion)) '.
+						'AND '.$datos['puntos'].' > (SELECT MIN(puntuacion) FROM partida);';
 
 			// Mandar la consulta a la Clase Conexion
 			$this->conexion->consultar($consulta);
