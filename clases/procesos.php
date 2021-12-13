@@ -1,57 +1,60 @@
 <?php
 
-	// IMPORTACIONES
-	require_once 'conexion.php';
+    // IMPORTACIONES
+    require_once 'conexion.php';
 
 
-	class Procesos{
+    class Procesos{
 
-        //ATRIBUTOS
-        private $conexion = null;
+	//ATRIBUTOS
+	private $conexion = null;
 
-		function __construct(){
+	    function __construct(){
 
-			$this->conexion = new Conexion();
+		$this->conexion = new Conexion();
 
-		}
+	    }
 
-		function altaPartida($datos){
+	    function altaPartida($datos){
 
-			//Consulta SQL para añadir una fila nueva a la tabla partida
-			$consulta = 'INSERT INTO partida(idJuego, nick, puntuacion, fechaHora)'.
-						'VALUES('.$datos['minijuego'].', "'.$datos['nick'].'", '.$datos['puntos'].', CURRENT_TIMESTAMP);';
+		//Consulta SQL para añadir una fila nueva a la tabla partida
+		$consulta = 'INSERT INTO partida(idJuego, nick, puntuacion, fechaHora)'.
+			    'VALUES('.$datos['minijuego'].', "'.$datos['nick'].'", '.$datos['puntos'].', CURRENT_TIMESTAMP);';
 
-			// Mandar la consulta a la Clase Conexion
-			$this->conexion->consultar($consulta);
+		// Mandar la consulta a la Clase Conexion
+		$this->conexion->consultar($consulta);
 
-		}
+	    }
 
-		function comprobarFilas($datos){
+	    function comprobarFilas($datos){
 
-			//Consulta SQL para comprobar la cantidad de filas que hay en la tabla partida
-			$consulta = 'SELECT idPartida FROM partida';
+		//Consulta SQL para comprobar la cantidad de filas que hay en la tabla partida
+		$consulta = 'SELECT COUNT(idPartida) FROM partida';
 
-			// Mandar la consulta a la Clase Conexion
-			$this->conexion->consultar($consulta);
+		// Mandar la consulta a la Clase Conexion
+		$this->conexion->consultar($consulta);
 
-			// Comprobar si tiene menos de 10 filas
-			if($this->conexion->numeroFilas() < 10)
-				$this->altaPartida($datos);
-			else $this->modificarPartida($datos);
+		//Obtener filas
+		$filas = $this->conexion->extraerFila();
 
-		}
+		// Comprobar si tiene menos de 10 filas
+		if($filas < 10)
+			$this->altaPartida($datos);
+		else $this->modificarPartida($datos);
 
-		function modificarPartida($datos){
+	    }
 
-			//Consulta SQL para comprobar la cantidad de filas que hay en la tabla partida
-			$consulta = 'UPDATE partida SET '.
-						'nick = "'.$datos['nick'].'", puntuacion = '.$datos['puntos'].', fechaHora = CURRENT_TIMESTAMP '.
-						'WHERE idPartida = (SELECT idPartida FROM partida HAVING MIN(puntuacion)) '.
-						'AND '.$datos['puntos'].' > (SELECT MIN(puntuacion) FROM partida);';
+	    function modificarPartida($datos){
 
-			// Mandar la consulta a la Clase Conexion
-			$this->conexion->consultar($consulta);
+		//Consulta SQL para comprobar la cantidad de filas que hay en la tabla partida
+		$consulta = 'UPDATE partida SET '.
+			    'nick = "'.$datos['nick'].'", puntuacion = '.$datos['puntos'].', fechaHora = CURRENT_TIMESTAMP '.
+			    'WHERE idPartida = (SELECT idPartida FROM partida HAVING MIN(puntuacion)) '.
+			    'AND '.$datos['puntos'].' > (SELECT MIN(puntuacion) FROM partida);';
 
-		}
+		// Mandar la consulta a la Clase Conexion
+		$this->conexion->consultar($consulta);
 
-	}
+	    }
+
+    }
